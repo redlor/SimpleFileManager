@@ -27,7 +27,8 @@ public class FileLoader extends AsyncTaskLoader<List<Item>>{
 
         String name = "";
         int icon = 0;
-        Item currentItem = new Item(name, icon);
+        String path = "";
+        Item currentItem = new Item(name, icon, path);
         currentItem.getFile();
         currentItem.getIcon();
 

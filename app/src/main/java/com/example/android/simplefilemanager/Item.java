@@ -6,11 +6,13 @@ package com.example.android.simplefilemanager;
 
 public class Item {
     public String file;
+    private String path;
     public int icon;
 
-    public Item(String file, Integer icon) {
+    public Item(String file, Integer icon, String path) {
         this.file = file;
         this.icon = icon;
+        this.path = path;
     }
 
     public String getFile() {
@@ -19,6 +21,10 @@ public class Item {
 
     public int getIcon() {
         return icon;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     @Override
