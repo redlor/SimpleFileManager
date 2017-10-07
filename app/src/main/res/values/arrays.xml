@@ -14,10 +14,9 @@
 
 <resources>
     <string-array name="settings_folder">
-        <item>Alarms</item>
         <item>Documents</item>
         <item>Downloads</item>
-        <item>Movies</item>
+        <item>Pictures</item>
         <item>Music</item>
     </string-array>
 

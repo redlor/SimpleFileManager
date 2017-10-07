@@ -18,42 +18,27 @@ import java.util.List;
 
 public class FileArrayAdapter extends ArrayAdapter<Item> {
 
-    private Context c;
-    private int id;
-    private List<Item> items;
 
-    public FileArrayAdapter(Context context, int textViewResourceId,
-                            List<Item> objects) {
-        super(context, textViewResourceId, objects);
-        c = context;
-        id = textViewResourceId;
-        items = objects;
-    }
 
     public FileArrayAdapter(Context context, List<Item> items) {
         super(context, 0, items);
     }
 
-
-   // public Item getItem(int i)
-    //{return items.get(i);}
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        View v = convertView;
-        if (v == null) {
-       //    v = LayoutInflater.from(getContext()).inflate(
-         //          R.layout.file_list_item, parent, false);
-         v = LayoutInflater.from(getContext()).inflate(
+        View listItemView = convertView;
+        if (listItemView == null) {
+
+            listItemView = LayoutInflater.from(getContext()).inflate(
                  R.layout.file_list_item, parent, false);
 
             viewHolder =  new ViewHolder();
-            viewHolder.name = (TextView) v.findViewById(R.id.TextView01);
-            viewHolder.icon = (ImageView) v.findViewById(R.id.fd_Icon1);
-            v.setTag(viewHolder);
+            viewHolder.name = (TextView) listItemView.findViewById(R.id.TextView01);
+            viewHolder.icon = (ImageView) listItemView.findViewById(R.id.fd_Icon1);
+            listItemView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) v.getTag();
+            viewHolder = (ViewHolder) listItemView.getTag();
         }
 
         Item currentItem = getItem(position);
@@ -61,16 +46,7 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
         Picasso.with(getContext()).load(currentItem.getIcon()).into(viewHolder.icon);
         viewHolder.name.setText(currentItem.getFile());
 
-      /*  final Item o = items.get(position);
-        if (o != null) {
-            TextView t1 = (TextView) v.findViewById(R.id.TextView01);
-            t1.setText(o.getFile());
-
-            ImageView imageView = (ImageView) v.findViewById(R.id.fd_Icon1);
-            Picasso.with(getContext()).load(o.getIcon()).into(imageView);
-
-        }*/
-        return v;
+        return listItemView;
     }
 
     public static class ViewHolder {
