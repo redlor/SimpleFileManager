@@ -13,4 +13,8 @@
     <string name="settings_folder_label">Default Folder</string>
     <string name="settings_folder_key" translatable="false">folder</string>
     <string name="settings_folder_default" translatable="false"></string>
+
+
+    <string name="menu_delete">Delete</string>
+    <string name="delete_dialog_msg">Delete this product?</string>
 </resources>
