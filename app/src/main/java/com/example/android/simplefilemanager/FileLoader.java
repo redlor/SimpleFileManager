@@ -10,9 +10,9 @@ import java.util.List;
  * Created by Hp on 07/10/2017.
  */
 
-public class FileLoader extends AsyncTaskLoader<List<Item>>{
+public class FileLoader extends AsyncTaskLoader<List<Item>> {
 
-    public FileLoader(Context context){
+    public FileLoader(Context context) {
         super(context);
     }
 

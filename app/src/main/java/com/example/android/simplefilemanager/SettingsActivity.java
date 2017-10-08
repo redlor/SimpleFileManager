@@ -21,7 +21,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class FileManagerPreferenceFragment extends PreferenceFragment
-    implements Preference.OnPreferenceChangeListener {
+            implements Preference.OnPreferenceChangeListener {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {

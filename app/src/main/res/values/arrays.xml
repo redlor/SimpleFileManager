@@ -14,10 +14,11 @@
 
 <resources>
     <string-array name="settings_folder">
-        <item>Documents</item>
+        <item>Root</item>
         <item>Downloads</item>
         <item>Pictures</item>
         <item>Music</item>
+        <item>Movies</item>
     </string-array>
 
 </resources>

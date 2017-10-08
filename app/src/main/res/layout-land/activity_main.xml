@@ -11,6 +11,8 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="2" />
+        android:horizontalSpacing="@dimen/grid_item_spacing"
+        android:verticalSpacing="@dimen/grid_item_spacing"
+        android:numColumns="auto_fit" />
 
 </LinearLayout>

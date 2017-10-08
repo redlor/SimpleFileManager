@@ -6,8 +6,8 @@ package com.example.android.simplefilemanager;
 
 public class Item {
     public String file;
-    private String path;
     public int icon;
+    private String path;
 
     public Item(String file, Integer icon, String path) {
         this.file = file;

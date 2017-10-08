@@ -27,7 +27,6 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
     private SparseBooleanArray mSelectedItemsIds;
 
 
-
     public FileArrayAdapter(Context context, List<Item> items) {
         super(context, 0, items);
         this.listItem = items;
@@ -41,9 +40,9 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
         if (listItemView == null) {
 
             listItemView = LayoutInflater.from(getContext()).inflate(
-                 R.layout.file_list_item, parent, false);
+                    R.layout.file_list_item, parent, false);
 
-            viewHolder =  new ViewHolder();
+            viewHolder = new ViewHolder();
             viewHolder.name = (TextView) listItemView.findViewById(R.id.TextView01);
             viewHolder.icon = (ImageView) listItemView.findViewById(R.id.fd_Icon1);
             listItemView.setTag(viewHolder);
@@ -60,11 +59,6 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
 
 
         return listItemView;
-    }
-
-    public static class ViewHolder {
-        ImageView icon;
-        TextView name;
     }
 
     @Override
@@ -109,5 +103,10 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
 
     public SparseBooleanArray getSelectedIds() {
         return mSelectedItemsIds;
+    }
+
+    public static class ViewHolder {
+        ImageView icon;
+        TextView name;
     }
 }

@@ -32,20 +32,17 @@ import java.util.List;
  * Created by Hp on 07/10/2017.
  */
 
-public class FileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Item>>{
+public class FileActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Item>> {
 
-    private File currentDir;
-    FileArrayAdapter adapter;
-    private static final int FILE_LOADER_ID = 1;
-    LoaderManager loaderManager;
-
-    private Context mContext;
-    boolean result;
-     boolean[] delete = new boolean[1];
     public static final String LOG_TAG = FileActivity.class.getName();
+    private static final int FILE_LOADER_ID = 1;
+    private static final String STATE_TASK_RUNNING = "taskRunning";
+    FileArrayAdapter adapter;
+    LoaderManager loaderManager;
     boolean test = false;
-
     ActionMode mActionMode;
+    private File currentDir;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +52,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         loaderManager = getLoaderManager();
         loaderManager.initLoader(FILE_LOADER_ID, null, this);
 
-
     }
-
 
     private void fill(final File file) {
         File[] directories = file.listFiles();
@@ -67,9 +62,9 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         try {
             for (File fileCounter : directories) {
                 if (fileCounter.isDirectory()) {
-                    dirList.add(new Item(fileCounter.getName(), R.drawable.ic_folder_grey600_36dp, fileCounter.getAbsolutePath()));
+                    dirList.add(new Item(fileCounter.getName(), R.drawable.ic_folder_close, fileCounter.getAbsolutePath()));
                 } else {
-                    filesList.add(new Item(fileCounter.getName(), R.drawable.ic_file_grey600_36dp, fileCounter.getAbsolutePath()));
+                    filesList.add(new Item(fileCounter.getName(), R.drawable.ic_file, fileCounter.getAbsolutePath()));
                 }
             }
         } catch (Exception e) {
@@ -78,19 +73,19 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
 
         dirList.addAll(filesList);
         if (!file.getName().equalsIgnoreCase("sdcard")) {
-            dirList.add(0, new Item("..", R.drawable.ic_refresh, file.getParent()));
+            dirList.add(0, new Item("..", R.drawable.ic_folder_open, file.getParent()));
         }
         adapter = new FileArrayAdapter(this, dirList);
         final ListView listView = (ListView) findViewById(R.id.list);
         GridView gridView = (GridView) findViewById(R.id.grid);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Item currentItem = adapter.getItem(position);
-                    if (currentItem.getIcon() == R.drawable.ic_folder_grey600_36dp || currentItem.getIcon() == R.drawable.ic_refresh) {
+                    if (currentItem.getIcon() == R.drawable.ic_folder_close || currentItem.getIcon() == R.drawable.ic_folder_open) {
                         currentDir = new File(currentItem.getPath());
                         fill(currentDir);
                     } else {
@@ -109,13 +104,13 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                onListItemSelect(position);
-                return true;
-            }
-        });
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemSelect(position);
+                    return true;
+                }
+            });
 
         } else {
             gridView.setAdapter(adapter);
@@ -123,7 +118,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Item currentItem = adapter.getItem(position);
-                    if (currentItem.getIcon() == R.drawable.ic_folder_grey600_36dp || currentItem.getIcon() == R.drawable.ic_refresh) {
+                    if (currentItem.getIcon() == R.drawable.ic_folder_close || currentItem.getIcon() == R.drawable.ic_folder_open) {
                         currentDir = new File(currentItem.getPath());
                         fill(currentDir);
                     } else {
@@ -139,6 +134,13 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                         intent.setDataAndType(data, type);
                         startActivity(intent);
                     }
+                }
+            });
+            gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemSelect(position);
+                    return true;
                 }
             });
         }
@@ -177,7 +179,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                // TO DO
+                fill(currentDir);
                 return true;
             case R.id.action_change_default_folder:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -201,16 +203,27 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                 getString(R.string.settings_folder_default));
 
         switch (defaultFolder) {
-            case "Documents": currentDir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_MUSIC);
+            case "Root":
+                currentDir = new File("/sdcard/");
                 break;
-            case "Downloads": currentDir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS);
+            case "Music":
+                currentDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_MUSIC);
                 break;
-            case "Pictures": currentDir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES);
+            case "Downloads":
+                currentDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS);
                 break;
-            default : currentDir = new File("/sdcard/");
+            case "Pictures":
+                currentDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES);
+                break;
+            case "Movies":
+                currentDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_MOVIES);
+                break;
+            default:
+                currentDir = new File("/sdcard/");
                 break;
         }
 
@@ -224,16 +237,46 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.clear();
     }
 
-    private class ActionBarCallBack extends AppCompatActivity implements ActionMode.Callback {
+    public boolean dialogMessage(final Context context) {
+        this.mContext = context;
+        final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+        alert.setTitle("Delete file");
+        alert.setMessage("Are you sure you want to delete this file?");
+        alert.setCancelable(false);
+
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                test = true;
+                Log.e(LOG_TAG, Boolean.toString(test));
+                deleteItemTest();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+        alert.create();
+        alert.show();
+        return test;
+    }
+
+    private void deleteItemTest() {
+
+        mActionMode = startActionMode(new ActionBarCallBack());
+        mActionMode.finish();
 
 
+    }
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+    private class ActionBarCallBack implements ActionMode.Callback {
 
-        }
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -254,14 +297,13 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                 case R.id.action_delete:
                     // AlertDialog diaBox = AskOption();
                     // diaBox.show();
-                    mContext= FileActivity.this;
+                    mContext = FileActivity.this;
                     dialogMessage(mContext);
 
                     Log.e(LOG_TAG, Boolean.toString(test));
 
 
-
-                  //à  mode.finish(); // Action picked, so close the CAB
+                    //  mode.finish(); // Action picked, so close the CAB
                     return true;
                 default:
                     return false;
@@ -273,7 +315,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         public void onDestroyActionMode(ActionMode mode) {
             // remove selection
             Log.e(LOG_TAG, Boolean.toString(test));
-            if(test){
+            if (test) {
 
                 // retrieve selected items and delete them out
                 SparseBooleanArray selected = adapter
@@ -292,47 +334,9 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
                 }
             }
+            test = false;
             adapter.removeSelection();
             mActionMode = null;
         }
-    }
-
-    public boolean dialogMessage(final Context context){
-        this.mContext = context;
-        final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-        alert.setTitle("Delete file");
-        alert.setMessage("Are you sure you want to delete this file?");
-        alert.setCancelable(false);
-        // the Yes button Fails to display
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                        test = true;
-                Log.e(LOG_TAG, Boolean.toString(test));
-                deleteItemTest();
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-
-            }
-        });
-        alert.create();
-        alert.show();
-        return test;
-    }
-
-
-    private void deleteItemTest() {
-
-        mActionMode = startActionMode(new ActionBarCallBack());
-            mActionMode.finish();
-
-
     }
 }
