@@ -2,6 +2,7 @@ package com.example.android.simplefilemanager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,9 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
 
         Picasso.with(getContext()).load(currentItem.getIcon()).into(viewHolder.icon);
         viewHolder.name.setText(currentItem.getFile());
+        listItemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4
+                : Color.TRANSPARENT);
+
 
         return listItemView;
     }
@@ -77,7 +81,7 @@ public class FileArrayAdapter extends ArrayAdapter<Item> {
         notifyDataSetChanged();
     }
 
-    public List<Item> getLaptops() {
+    public List<Item> getListItem() {
         return listItem;
     }
 

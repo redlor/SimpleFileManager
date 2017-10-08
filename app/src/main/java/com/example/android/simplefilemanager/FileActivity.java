@@ -1,6 +1,8 @@
 package com.example.android.simplefilemanager;
 
 import android.app.LoaderManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -9,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -35,7 +39,11 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int FILE_LOADER_ID = 1;
     LoaderManager loaderManager;
 
+    private Context mContext;
+    boolean result;
+     boolean[] delete = new boolean[1];
     public static final String LOG_TAG = FileActivity.class.getName();
+    boolean test = false;
 
     ActionMode mActionMode;
 
@@ -47,9 +55,11 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         loaderManager = getLoaderManager();
         loaderManager.initLoader(FILE_LOADER_ID, null, this);
 
+
     }
 
-    private void fill(File file) {
+
+    private void fill(final File file) {
         File[] directories = file.listFiles();
         this.setTitle("Current directory: " + file.getName());
         List<Item> dirList = new ArrayList<Item>();
@@ -214,8 +224,16 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.clear();
     }
 
-    private class ActionBarCallBack implements ActionMode.Callback {
+    private class ActionBarCallBack extends AppCompatActivity implements ActionMode.Callback {
 
+
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+
+        }
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -234,17 +252,16 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
 
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    // retrieve selected items and delete them out
-                    SparseBooleanArray selected = adapter
-                            .getSelectedIds();
-                    for (int i = (selected.size() - 1); i >= 0; i--) {
-                        if (selected.valueAt(i)) {
-                            Item selectedItem = adapter
-                                    .getItem(selected.keyAt(i));
-                            adapter.remove(selectedItem);
-                        }
-                    }
-                    mode.finish(); // Action picked, so close the CAB
+                    // AlertDialog diaBox = AskOption();
+                    // diaBox.show();
+                    mContext= FileActivity.this;
+                    dialogMessage(mContext);
+
+                    Log.e(LOG_TAG, Boolean.toString(test));
+
+
+
+                  //à  mode.finish(); // Action picked, so close the CAB
                     return true;
                 default:
                     return false;
@@ -255,9 +272,67 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             // remove selection
+            Log.e(LOG_TAG, Boolean.toString(test));
+            if(test){
+
+                // retrieve selected items and delete them out
+                SparseBooleanArray selected = adapter
+                        .getSelectedIds();
+                System.out.println(selected.toString());
+
+                for (int i = (selected.size() - 1); i >= 0; i--) {
+                    if (selected.valueAt(i)) {
+                        Item selectedItem = adapter
+                                .getItem(selected.keyAt(i));
+                        adapter.remove(selectedItem);
+                        String filePath = selectedItem.getPath();
+                        File fileDelete = new File(filePath);
+                        fileDelete.delete();
+                        Log.e(LOG_TAG, fileDelete.toString());
+                    }
+                }
+            }
             adapter.removeSelection();
             mActionMode = null;
         }
     }
 
+    public boolean dialogMessage(final Context context){
+        this.mContext = context;
+        final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+        alert.setTitle("Delete file");
+        alert.setMessage("Are you sure you want to delete this file?");
+        alert.setCancelable(false);
+        // the Yes button Fails to display
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                        test = true;
+                Log.e(LOG_TAG, Boolean.toString(test));
+                deleteItemTest();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+        alert.create();
+        alert.show();
+        return test;
+    }
+
+
+    private void deleteItemTest() {
+
+        mActionMode = startActionMode(new ActionBarCallBack());
+            mActionMode.finish();
+
+
+    }
 }
