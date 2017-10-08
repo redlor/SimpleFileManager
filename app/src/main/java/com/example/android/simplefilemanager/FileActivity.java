@@ -19,6 +19,8 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -84,6 +86,9 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                    animation1.setDuration(4000);
+                    view.startAnimation(animation1);
                     Item currentItem = adapter.getItem(position);
                     if (currentItem.getIcon() == R.drawable.ic_folder_close || currentItem.getIcon() == R.drawable.ic_folder_open) {
                         currentDir = new File(currentItem.getPath());
@@ -117,6 +122,9 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                    animation1.setDuration(4000);
+                    view.startAnimation(animation1);
                     Item currentItem = adapter.getItem(position);
                     if (currentItem.getIcon() == R.drawable.ic_folder_close || currentItem.getIcon() == R.drawable.ic_folder_open) {
                         currentDir = new File(currentItem.getPath());
