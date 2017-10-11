@@ -41,20 +41,24 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String STATE_TASK_RUNNING = "taskRunning";
     FileArrayAdapter adapter;
     LoaderManager loaderManager;
-    boolean test = false;
+    boolean testDelete = false;
     ActionMode mActionMode;
     private File currentDir;
     private Context mContext;
+    boolean loaderReset =  true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+if (loaderReset) {
 
-        loaderManager = getLoaderManager();
-        loaderManager.initLoader(FILE_LOADER_ID, null, this);
+    loaderManager = getLoaderManager();
+    loaderManager.initLoader(FILE_LOADER_ID, null, this);
 
+}
     }
+
 
     private void fill(final File file) {
         File[] directories = file.listFiles();
@@ -238,6 +242,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         // currentDir = new File("/sdcard/");
         // currentDir = new File(defaultFolder);
         fill(currentDir);
+        loaderReset = false;
     }
 
     @Override
@@ -256,8 +261,8 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                test = true;
-                Log.e(LOG_TAG, Boolean.toString(test));
+                testDelete = true;
+                Log.e(LOG_TAG, Boolean.toString(testDelete));
                 deleteItemTest();
             }
         });
@@ -272,7 +277,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         });
         alert.create();
         alert.show();
-        return test;
+        return testDelete;
     }
 
     private void deleteItemTest() {
@@ -308,7 +313,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                     mContext = FileActivity.this;
                     dialogMessage(mContext);
 
-                    Log.e(LOG_TAG, Boolean.toString(test));
+                    Log.e(LOG_TAG, Boolean.toString(testDelete));
 
 
                     //  mode.finish(); // Action picked, so close the CAB
@@ -322,8 +327,8 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             // remove selection
-            Log.e(LOG_TAG, Boolean.toString(test));
-            if (test) {
+            Log.e(LOG_TAG, Boolean.toString(testDelete));
+            if (testDelete) {
 
                 // retrieve selected items and delete them out
                 SparseBooleanArray selected = adapter
@@ -342,7 +347,7 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
                 }
             }
-            test = false;
+            testDelete = false;
             adapter.removeSelection();
             mActionMode = null;
         }
