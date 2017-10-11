@@ -43,20 +43,20 @@ public class FileActivity extends AppCompatActivity implements LoaderManager.Loa
     LoaderManager loaderManager;
     boolean testDelete = false;
     ActionMode mActionMode;
+    boolean loaderReset = true;
     private File currentDir;
     private Context mContext;
-    boolean loaderReset =  true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-if (loaderReset) {
+        if (loaderReset) {
 
-    loaderManager = getLoaderManager();
-    loaderManager.initLoader(FILE_LOADER_ID, null, this);
+            loaderManager = getLoaderManager();
+            loaderManager.initLoader(FILE_LOADER_ID, null, this);
 
-}
+        }
     }
 
 
